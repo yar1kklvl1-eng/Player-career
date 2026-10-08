@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Career</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #10131a;
+        color: white;
+    }
+
+    .app {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: #1b202b;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-top: 12px;
+        margin-bottom: 5px;
+        color: #aeb6c5;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: none;
+        background: #292f3d;
+        color: white;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 12px;
+        background: #36d66b;
+        color: #07100a;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .player-name {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .rating {
+        font-size: 42px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .stat {
+        background: #292f3d;
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .stat span {
+        color: #aeb6c5;
+        font-size: 13px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <h1>⚽ PLAYER CAREER</h1>
+
+    <!-- СОЗДАНИЕ ИГРОКА -->
+
+    <div id="creation" class="card">
+
+        <h2>Создание игрока</h2>
+
+        <label>Имя футболиста</label>
+        <input id="name" placeholder="Например: Ярослав">
+
+        <label>Возраст</label>
+        <input id="age" type="number" min="15" max="30" value="17">
+
+        <label>Страна</label>
+        <select id="country">
+            <option>🇺🇦 Украина</option>
+            <option>🇵🇹 Португалия</option>
+            <option>🇪🇸 Испания</option>
+            <option>🇧🇷 Бразилия</option>
+            <option>🇦🇷 Аргентина</option>
+            <option>🇫🇷 Франция</option>
+            <option>🇩🇪 Германия</option>
+            <option>🏴 Англия</option>
+        </select>
+
+        <label>Позиция</label>
+        <select id="position">
+            <option>ЦАП</option>
+            <option>ЦП</option>
+            <option>ПП</option>
+            <option>ЛП</option>
+            <option>ПВ</option>
+            <option>ЛВ</option>
+            <option>ЦФ</option>
+            <option>ЦЗ</option>
+            <option>ПЗ</option>
+            <option>ЛЗ</option>
+            <option>ВРТ</option>
+        </select>
+
+        <button onclick="createPlayer()">⚽ СОЗДАТЬ ИГРОКА</button>
+
+    </div>
+
+
+    <!-- ПРОФИЛЬ -->
+
+    <div id="career" class="hidden">
+
+        <div class="card">
+
+            <div class="player-name" id="playerName"></div>
+
+            <p id="playerInfo"></p>
+
+            <div class="rating" id="ovr"></div>
+
+            <p>⭐ Общий рейтинг</p>
+
+            <p id="potential"></p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>📊 Атрибуты</h2>
+
+            <div class="stats">
+
+                <div class="stat">
+                    ⚡ Скорость
+                    <br>
+                    <b id="speed"></b>
+                </div>
+
+                <div class="stat">
+                    🎯 Удар
+                    <br>
+                    <b id="shot"></b>
+                </div>
+
+                <div class="stat">
+                    🎯 Пас
+                    <br>
+                    <b id="pass"></b>
+                </div>
+
+                <div class="stat">
+                    🌀 Дриблинг
+                    <br>
+                    <b id="dribble"></b>
+                </div>
+
+                <div class="stat">
+                    💪 Физика
+                    <br>
+                    <b id="physical"></b>
+                </div>
+
+                <div class="stat">
+                    🧠 Видение
+                    <br>
+                    <b id="vision"></b>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>🏟️ Карьера</h2>
+
+            <p>🏆 Матчи: <b id="matches">0</b></p>
+            <p>⚽ Голы: <b id="goals">0</b></p>
+            <p>🅰️ Ассисты: <b id="assists">0</b></p>
+
+            <button onclick="nextMatch()">▶️ СЛЕДУЮЩИЙ МАТЧ</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function randomStat() {
+    return Math.floor(Math.random() * 21) + 55;
+}
+
+
+function createPlayer() {
+
+    let name = document.getElementById("name").value.trim();
+    let age = Number(document.getElementById("age").value);
+
+    if (!name) {
+        alert("Введите имя футболиста!");
+        return;
+    }
+
+    if (age < 15 || age > 30) {
+        alert("Возраст должен быть от 15 до 30 лет!");
+        return;
+    }
+
+    let country = document.getElementById("country").value;
+    let position = document.getElementById("position").value;
+
+    let speed = randomStat();
+    let shot = randomStat();
+    let pass = randomStat();
+    let dribble = randomStat();
+    let physical = randomStat();
+    let vision = randomStat();
+
+    let ovr = Math.round(
+        (speed + shot + pass + dribble + physical + vision) / 6
+    );
+
+    let potential = Math.min(
+        99,
+        ovr + Math.floor(Math.random() * 20) + 5
+    );
+
+    document.getElementById("playerName").textContent = name;
+
+    document.getElementById("playerInfo").textContent =
+        country + " • " + age + " лет • " + position;
+
+    document.getElementById("ovr").textContent = ovr;
+
+    document.getElementById("potential").textContent =
+        "📈 Потенциал: " + potential;
+
+    document.getElementById("speed").textContent = speed;
+    document.getElementById("shot").textContent = shot;
+    document.getElementById("pass").textContent = pass;
+    document.getElementById("dribble").textContent = dribble;
+    document.getElementById("physical").textContent = physical;
+    document.getElementById("vision").textContent = vision;
+
+    document.getElementById("creation").classList.add("hidden");
+    document.getElementById("career").classList.remove("hidden");
+}
+
+
+function nextMatch() {
+
+    let matches = Number(
+        document.getElementById("matches").textContent
+    );
+
+    let goals = Number(
+        document.getElementById("goals").textContent
+    );
+
+    let assists = Number(
+        document.getElementById("assists").textContent
+    );
+
+    matches++;
+
+    if (Math.random() < 0.35) {
+        goals++;
+        alert("⚽ ГОЛ! Ты забил!");
+    }
+    else if (Math.random() < 0.35) {
+        assists++;
+        alert("🅰️ Отличная передача! Ассист!");
+    }
+    else {
+        alert("🏟️ Матч завершён.");
+    }
+
+    document.getElementById("matches").textContent = matches;
+    document.getElementById("goals").textContent = goals;
+    document.getElementById("assists").textContent = assists;
+}
+
+</script>
+
+</body>
+  </html>
